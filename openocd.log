@@ -1,0 +1,18 @@
+Info : only one transport option; autoselect 'jtag'
+adapter speed: 500 kHz
+Info : clock speed 500 kHz
+Info : JTAG tap: lm3s1968.cpu tap/device found: 0x3ba00477 (mfg: 0x23b, part: 0xba00, ver: 0x3)
+Info : lm3s1968.cpu: hardware has 6 breakpoints, 4 watchpoints
+Info : accepting 'gdb' connection from pipe
+Warn : acknowledgment received, but no packet pending
+undefined debug reason 6 - target needs reset
+adapter speed: 500 kHz
+cortex_m3 reset_config sysresetreq
+Info : JTAG tap: lm3s1968.cpu tap/device found: 0x3ba00477 (mfg: 0x23b, part: 0xba00, ver: 0x3)
+target state: halted
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x0000649c msp: 0x2000a280
+adapter speed: 500 kHz
+cortex_m3 reset_config sysresetreq
+Info : JTAG tap: lm3s1968.cpu tap/device found: 0x3ba00477 (mfg: 0x23b, part: 0xba00, ver: 0x3)
+Info : dropped 'gdb' connection
