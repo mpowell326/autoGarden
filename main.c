@@ -140,13 +140,7 @@ int main( void )
 	prvSetupHardware();
 
 
-    xQueueHandle xSensorQueue   = (xQueueHandle)  pvStartSensorModule();
-    vStartWifiModule();
-    vStartAutoGardenModule( (void *) xSensorQueue );
-
-    /* Start tasks required for waveform analyser */
-    pxOLEDQueue = (xQueueHandle) pvStartScreenModule();
-    vStartADCModule( ( void * ) pxOLEDQueue );
+    xQueueHandle xWaterSchedule_Queue     = (xQueueHandle) pvWaterSchedule_StartModule()
 
 
 	/* Start the scheduler. */

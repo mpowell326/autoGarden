@@ -35,15 +35,12 @@
 #include "interrupt.h"
 
 /* My app includes. */
-#include "screen.h"
-#include "lcd_message.h"
-#include "my_adc.h"
 
 /*-----------------------------------------------------------------------------------------------*/
 /* Defines                                                                                       */
 /*-----------------------------------------------------------------------------------------------*/
-
-
+#define SPRINKLER_GPIO_BASE 'A'
+#define SPRINKLER_PIN       GPIO_PIN_3
 /*-----------------------------------------------------------------------------------------------*/
 /* Macros                                                                                        */
 /*-----------------------------------------------------------------------------------------------*/
@@ -84,15 +81,32 @@ static xSemaphoreHandle xSprinklerReady;
 /*-----------------------------------------------------------------------------------------------*/
 /* Public Functions                                                                              */
 /*-----------------------------------------------------------------------------------------------*/
-
-void turnOnSprinkler()
+void sprinkler_Initialise()
 {
-    GPIO_write(sprinkler_pin, High);
+    // Enable the port A Peripheral
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    //Set Pin on port A base as an output
+    GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,SPRINKLER_PIN);
+    xSemaphoreGive(xSprinklerReady)
 }
 
-void turnOnSprinkler()
+bool sprinkler_TurnOn()
 {
-    GPIO_write(sprinkler_pin, Low);
+    if( xSemaphoreTake(xSprinklerReady) )
+    {
+        GPIOPinWrite(GPIO_PORTA_BASE,SPRINKLER_PIN,0xff);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void sprinkler_TurnOff()
+{
+    GPIOPinWrite(GPIO_PORTA_BASE,SPRINKLER_PIN,0x00);
+    xSemaphoreGive(xSprinklerReady)
 }
 
 
