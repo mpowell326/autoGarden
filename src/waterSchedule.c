@@ -38,14 +38,14 @@
 #include "interrupt.h"
 
 /* My app includes. */
-
+#include "sprinkler.h"
 
 /*-----------------------------------------------------------------------------------------------*/
 /* Defines                                                                                       */
 /*-----------------------------------------------------------------------------------------------*/
 #define MAX_EVENT_DESCTIPTION               ( 100 )
-#define SCHEDULE_TASK_STACK_SIZE            ( configMINIMAL_STACK_SIZE )
-#define SCHEDULE_QUEUE_SIZE                 ( 5 )
+#define WATER_SCHEDULE_TASK_STACK_SIZE            ( configMINIMAL_STACK_SIZE )
+#define WATER_SCHEDULE_QUEUE_SIZE                 ( 5 )
 /*-----------------------------------------------------------------------------------------------*/
 /* Macros                                                                                        */
 /*-----------------------------------------------------------------------------------------------*/
@@ -53,13 +53,30 @@
 /*-----------------------------------------------------------------------------------------------*/
 /* Types                                                                                         */
 /*-----------------------------------------------------------------------------------------------*/
-struct event {
-    int id;
-    tm start_time;
-    tm duration;
-    bool recurring;
-    char description[MAX_EVENT_DESCTIPTION]
-}
+// struct event {
+//     int id;
+//     tm start_time;
+//     tm duration;
+//     bool recurring;
+//     char description[MAX_EVENT_DESCTIPTION]
+// }
+
+typedef  water_schedule_t;
+
+typedef enum _event{      //TODO: Remove unused items
+    ADD,
+    REMOVE,
+    LIST,
+} _event_t;
+
+
+typedef struct                  //TODO: Remove unused items
+{
+    _event_t event;
+    int num;
+
+} xWaterSchedule_QueueItem;
+
 
 /*-----------------------------------------------------------------------------------------------*/
 /* Function Prototypes                                                                           */
@@ -74,7 +91,6 @@ struct event {
 /* Variables                                                                                     */
 /*-----------------------------------------------------------------------------------------------*/
 
-
 /*===============================================================================================*/
 /*===============================================================================================*/
 /*===============================================================================================*/
@@ -88,35 +104,39 @@ struct event {
 /*-----------------------------------------------------------------------------------------------*/
 water_schedule_t pvWaterSchedule_init()
 {
-    // Create array of len MINS_IN_DAY to hold pointers to events for the day.
-    water_schedule_t *day_schedule = malloc(sizeof(*pEvent) * MINS_IN_DAY);
+    // sprinkler_Initialise();
 
-    return day_schedule
+    // Create array of len MINS_IN_DAY to hold pointers to events for the day.
+    // water_schedule_t *day_schedule = malloc(sizeof(*pEvent) * MINS_IN_DAY);
+    water_schedule_t day_schedule;
+    return day_schedule;
 }
 
 void vWaterSchedule_PollTask(void *pvParameters)
 {
-    water_schedule_t schedule           = (water_schedule_t) pvParameters;
+    water_schedule_t schedule           =  (water_schedule_t) pvParameters;
 
-
-    current_time = time.now()
-    current_minute = time2minuteinday(current_time);
-
-    if( sprinkler_isOn == true )
+    while(1)
     {
+        // time_t current_time = time(NULL);
+        // current_minute = time2minuteinday(current_time);
 
+        // if( sprinkler_isOn == true )
+        // {
+        //
+        // }
+        // if (schedule[current_minute] != NULL)
+        // {
+            sprinkler_TurnOn();
+        // }
     }
-    if (schedule[current_minute] != NULL)
-    {
-        sprinkler_TurnOn()
-    }
-
 }
 
 void vWaterSchedule_UpdateEventsTask(void *pvParameters)
 {
-    xQueueHandle xWaterSchedule_Queue   = (xQueueHandle) pvParameters.queue;
-    water_schedule_t schedule           = (water_schedule_t) pvParameters.schedule;
+    // ((struct params){.schedule=schedule,.queue=xWaterSchedule_Queue})
+    // xQueueHandle xWaterSchedule_Queue   = (struct {water_schedule_t schedule, xQueueHandle queue }) pvParameters).queue;
+    // water_schedule_t schedule           = (struct params{water_schedule_t schedule, xQueueHandle queue }) pvParameters.schedule;
 
     xWaterSchedule_QueueItem xWaterSchedule_Item;
 
@@ -124,44 +144,46 @@ void vWaterSchedule_UpdateEventsTask(void *pvParameters)
     while(1)
     {
         /* Wait for a message to arrive and update schedule with event. */
-        if( xQueueReceive( xWaterSchedule_Queue, &xWaterSchedule_Item, 0 ) )
-        {
-            pv
-        }
+        // if( xQueueReceive( xWaterSchedule_Queue, &xWaterSchedule_Item, 0 ) )
+        // {
+            // pv
+        // }
+    }
 }
 /*-----------------------------------------------------------------------------------------------*/
 /* Public Functions                                                                              */
 /*-----------------------------------------------------------------------------------------------*/
 xQueueHandle pvWaterSchedule_StartModule()
 {
-    water_schedule_t schedule = xWaterSchedule_init();
+    water_schedule_t schedule   = pvWaterSchedule_init();
+    // water_schedule_t schedule = xWaterSchedule_init();
 
     /* Create the queue used by the Schedule task to add new events. */
-    xQueueHandle xWaterSchedule_Queue = xQueueCreate( WATERSCHEDULE_QUEUE_SIZE, sizeof( xWaterSchedule_QueueItem ) );
+    xQueueHandle xWaterSchedule_Queue = xQueueCreate( WATER_SCHEDULE_QUEUE_SIZE, sizeof( xWaterSchedule_QueueItem ) );
 
 
     xTaskCreate( vWaterSchedule_PollTask,       ( signed portCHAR * ) "waterschedulePollTask",  WATER_SCHEDULE_TASK_STACK_SIZE, (void *) schedule, tskIDLE_PRIORITY+1, NULL );
-    xTaskCreate( vWaterSchedule_UpdateEvents,   ( signed portCHAR * ) "waterscheduleUpdateTask", WATER_SCHEDULE_TASK_STACK_SIZE, \
-                                                                        (void *) (struct params){.schedule=schedule,.queue=xWaterSchedule_Queue}, tskIDLE_PRIORITY+1, NULL );
+    // xTaskCreate( vWaterSchedule_UpdateEvents,   ( signed portCHAR * ) "waterscheduleUpdateTask", WATER_SCHEDULE_TASK_STACK_SIZE, \
+                                                                        (void *) ((struct {water_schedule_t schedule, xQueueHandle queue }){schedule,xWaterSchedule_Queue}), tskIDLE_PRIORITY+1, NULL );
 
 
     return ( void * ) xWaterSchedule_Queue;
 }
+//
+// void pvWaterSchedule_AddEvent(event)
+// {
+//
+// }
+//
+// void pvWaterSchedule_RemoveEvent()
+// {
+//
+// }
 
-void pvWaterSchedule_AddEvent(event)
-{
-
-}
-
-void pvWaterSchedule_RemoveEvent()
-{
-
-}
-
-water_schedule_t * xWaterSchedule_ListEvents()
-{
-
-}
+// water_schedule_t * xWaterSchedule_ListEvents()
+// {
+//
+// }
 
 /**************************************************************************************************
 *   waterSchedule.c

@@ -37,12 +37,12 @@
 /* Defines                                                                                       */
 /*-----------------------------------------------------------------------------------------------*/
 /*  y=95 ^
-         | 
+         |
          |
          |
          |
     y=0  |------------>
-        x=0           x=127 
+        x=0           x=127
 */
 #define OLED_WIDTH                          ( 127 )
 #define OLED_HEIGHT                         ( 95 )
@@ -88,7 +88,7 @@ time. */
 /*-----------------------------------------------------------------------------------------------*/
 /* Macros                                                                                        */
 /*-----------------------------------------------------------------------------------------------*/
-#define LINE(y)             ( (y) * (TEXT_HEIGHT + 1) ) 
+#define LINE(y)             ( (y) * (TEXT_HEIGHT + 1) )
 #define COL(x)              ( ((x) == 0) ? (0) : (OLED_WIDTH/2 + 1)  )
 
 
@@ -118,7 +118,7 @@ void ( *vOLEDClear )( void ) = RIT128x96x4Clear;
 /*-----------------------------------------------------------------------------------------------*/
 /* The welcome text. */
 static const portCHAR * const pcWelcomeMessage = "   ENCE463: Assg 1";
-static Canvas  Graph = 
+static Canvas  Graph =
 {
     .x0 = 2,//BORDER_WIDTH+1,                                  // 2
     .y0 = BORDER_WIDTH,                                  // 1
@@ -206,7 +206,7 @@ static void vScreen_plotGraph(int voltage,int brightness)
     pixel[0] = vScreen_getPixel(t, brightness);
 
 
-    vOLEDImageDraw( pixel, t/2, Y(y), 2, 1 );   
+    vOLEDImageDraw( pixel, t/2, Y(y), 2, 1 );
 
     if( ++t >= 2*Graph.xmax)
     {
@@ -222,7 +222,7 @@ static void vScreen_drawGraph(int* volt_array, int brightness)
 {
     static unsigned char bitmap[62*73];
     int x,y;
-    
+
     for (x=0;x<=(62*73);x++)
     {
         bitmap[x] = 0x00;
@@ -236,8 +236,8 @@ static void vScreen_drawGraph(int* volt_array, int brightness)
         //right pixel in byte
         y = (Graph.height-4)* volt_array[2*x+1] /3000+2;
         bitmap[Graph.width/2 * (Graph.height-y) + (Graph.height-y) + x] |= vScreen_getPixel(2*x+1, brightness);
-    } 
-    
+    }
+
     vOLEDImageDraw( bitmap, Graph.x0, Y(Graph.ymax-1), Graph.width, Graph.height );
 }
 
@@ -263,7 +263,7 @@ static void vScreenDisplayMessage( char *str )
     sprintf( cMessage, "%s", str);
     vOLEDStringDraw( str, 0, ulY, TEXT_BRIGHTNESS );
 
-    
+
 
 }
 
@@ -274,20 +274,20 @@ static void vScreenUpdateTask( void *pvParameters)
     xScreenQueueItem xScreenItem;
 
     portCHAR cMessage[ 100 ];
- 
+
     // Wait for splash screen to display for 1 second
     vTaskDelay(1000);
     vOLEDClear();
 
     // Draw the default screen layout
-    // vScreen_drawLayout();
+    vScreen_drawLayout();
 
 
     while(1)
     {
         /* Wait for a message to arrive that requires displaying. */
         if( xQueueReceive( xOLEDQueue, &xScreenItem, 0 ) ) {
-            
+
             switch( xScreenItem.event )
             {
                 case MESSAGE:
@@ -378,7 +378,7 @@ xQueueHandle pvStartScreenModule()
 
     vScreenInitTask();
 
-    xTaskCreate( vScreenUpdateTask, ( signed portCHAR * ) "screenUpdate", mainOLED_TASK_STACK_SIZE, ( void * ) xOLEDQueue, tskIDLE_PRIORITY+1, NULL ); 
+    xTaskCreate( vScreenUpdateTask, ( signed portCHAR * ) "screenUpdate", mainOLED_TASK_STACK_SIZE, ( void * ) xOLEDQueue, tskIDLE_PRIORITY+1, NULL );
 
     return ( void * ) xOLEDQueue;
 }

@@ -106,8 +106,7 @@
 
 /* My app includes. */
 #include "screen.h"
-#include "my_adc.h"
-#include "my_pwm.h"
+#include "waterSchedule.h"
 
 /*-----------------------------------------------------------*/
 
@@ -125,6 +124,18 @@ the jitter time in nano seconds. */
  */
 static void prvSetupHardware( void );
 
+/*
+ * The idle hook is used to run a test of the scheduler context switch
+ * mechanism.
+ */
+void vApplicationIdleHook( void ) __attribute__((naked));
+/*-----------------------------------------------------------*/
+
+
+
+
+/* Variables used to detect the test in the idle hook failing. */
+unsigned portLONG ulIdleError = pdFALSE;
 
 /*-----------------------------------------------------------*/
 
@@ -136,12 +147,16 @@ static void prvSetupHardware( void );
 int main( void )
 {
     /* The queue used to send messages to the OLED task. */
-    xQueueHandle pxOLEDQueue;
+    xQueueHandle xOLEDQueue;
 	prvSetupHardware();
 
+    xOLEDQueue = (xQueueHandle) pvStartScreenModule();
+    xQueueHandle xWaterSchedule_Queue     = (xQueueHandle) pvWaterSchedule_StartModule();
 
-    xQueueHandle xWaterSchedule_Queue     = (xQueueHandle) pvWaterSchedule_StartModule()
-
+    xScreenQueueItem xItem;
+    xItem.event = MESSAGE;
+    xItem.num = "it works :)";
+    xQueueSendToBack( xOLEDQueue, &xItem, 0);
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
@@ -172,6 +187,19 @@ void prvSetupHardware( void )
 	GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
 	GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
 
-	vParTestInitialise();
+	// vParTestInitialise();
 }
 /*-----------------------------------------------------------*/
+
+// void vApplicationTickHook( void )
+// {
+//                     // Not used in this app
+// }
+// /*-----------------------------------------------------------*/
+//
+//
+// void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName )
+// {
+// 	for( ;; );      // Not used in this app
+// }
+// /*-----------------------------------------------------------*/

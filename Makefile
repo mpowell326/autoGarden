@@ -1,6 +1,6 @@
 #/*
 #    FreeRTOS V7.4.2 - Copyright (C) 2013 Real Time Engineers Ltd.
-#	
+#
 #
 #    ***************************************************************************
 #     *                                                                       *
@@ -52,7 +52,7 @@
 #*/
 
 
-#/************************************************************************* 
+#/*************************************************************************
 # * Please ensure to read http://www.freertos.org/portLM3Sxxxx_Eclipse.html
 # * which provides information on configuring and running this demo for the
 # * various Luminary Micro EKs.
@@ -88,36 +88,24 @@ CFLAGS=$(DEBUG) -I . -I $(RTOS_SOURCE_DIR)  \
 		-I $(MY_INCLUDE_DIR)
 
 SOURCE=	main.c \
-		$(DEMO_COMMON_DIR)/timertest.c \
-		$(DEMO_COMMON_DIR)/ParTest.c \
 		$(LUMINARY_DRIVER_DIR)/rit128x96x4.c \
 		$(LUMINARY_DRIVER_DIR)/ustdlib.c \
-		$(DEMO_COMMON_DIR)/BlockQ.c \
-		$(DEMO_COMMON_DIR)/blocktim.c \
-		$(DEMO_COMMON_DIR)/death.c \
-		$(DEMO_COMMON_DIR)/integer.c \
-		$(DEMO_COMMON_DIR)/PollQ.c \
-		$(DEMO_COMMON_DIR)/semtest.c \
-		$(DEMO_COMMON_DIR)/GenQTest.c \
-		$(DEMO_COMMON_DIR)/QPeek.c \
-		$(DEMO_COMMON_DIR)/recmutex.c \
-		$(DEMO_COMMON_DIR)/IntQueue.c \
-		$(DEMO_COMMON_DIR)/IntQueueTimer.c \
 		$(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(LUMINARY_DRIVER_DIR)/port.c \
 		$(LUMINARY_DRIVER_DIR)/heap_2.c \
 		$(MY_SOURCE_DIR)/screen.c \
-		$(MY_SOURCE_DIR)/my_adc.c \
-		$(MY_SOURCE_DIR)/my_pwm.c
+		$(MY_SOURCE_DIR)/waterSchedule.c \
+		$(MY_SOURCE_DIR)/sprinkler.c
+
 
 LIBS= $(LUMINARY_DRIVER_DIR)/libdriver.a $(LUMINARY_DRIVER_DIR)/libgr.a
 
 OBJS = $(SOURCE:.c=.o)
 
 all: RTOSDemo.bin
-	 
+
 RTOSDemo.bin : RTOSDemo.axf
 	$(OBJCOPY) RTOSDemo.axf -O binary RTOSDemo.bin
 
@@ -132,11 +120,7 @@ startup.o : startup.c Makefile
 
 program: RTOSDemo.bin
 	$(GDB) -batch -x $(GDB_COMMANDS) RTOSDemo.axf
-		
+
 clean :
 	touch Makefile
 	rm $(OBJS)
-	
-
-
-

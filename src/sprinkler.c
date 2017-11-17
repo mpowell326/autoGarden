@@ -35,6 +35,7 @@
 #include "interrupt.h"
 
 /* My app includes. */
+#include "sprinkler.h"
 
 /*-----------------------------------------------------------------------------------------------*/
 /* Defines                                                                                       */
@@ -87,26 +88,26 @@ void sprinkler_Initialise()
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     //Set Pin on port A base as an output
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,SPRINKLER_PIN);
-    xSemaphoreGive(xSprinklerReady)
+    xSemaphoreGive(xSprinklerReady);
 }
 
 bool sprinkler_TurnOn()
 {
-    if( xSemaphoreTake(xSprinklerReady) )
-    {
+    // if( xSemaphoreTake(xSprinklerReady,NULL) )
+    // {
         GPIOPinWrite(GPIO_PORTA_BASE,SPRINKLER_PIN,0xff);
         return true;
-    }
-    else
-    {
-        return false;
-    }
+    // }
+    // else
+    // {
+    //     return false;
+    // }
 }
 
 void sprinkler_TurnOff()
 {
     GPIOPinWrite(GPIO_PORTA_BASE,SPRINKLER_PIN,0x00);
-    xSemaphoreGive(xSprinklerReady)
+    xSemaphoreGive(xSprinklerReady);
 }
 
 
