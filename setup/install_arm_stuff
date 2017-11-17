@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+#For Ubuntu 14.04LTS 'trusty tar'
+sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
+sudo apt-get update
+sudo apt-get install gcc-arm-none-eabi
+
+
+sudo apt-get install openocd
+sudo apt-get install gdb-arm-none-eabi
+
